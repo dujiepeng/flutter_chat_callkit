@@ -1,4 +1,4 @@
-import 'package:agora_chat_callkit/agora_chat_callkit.dart';
+import 'package:agora_chat_callkit/chat_callkit.dart';
 import 'package:example/call_pages/call_button.dart';
 import 'package:example/call_pages/multi_call_item_view.dart';
 import 'package:example/call_pages/multi_call_view.dart';
@@ -73,7 +73,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
     super.initState();
     addCallKitListener();
     currentList = widget.userList;
-    ChatCallKitCallManager.initRTC().then((value) {
+    ChatCallKitManager.initRTC().then((value) {
       afterInit();
     });
   }
@@ -81,7 +81,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
   Future<void> afterInit() async {
     if (widget.isCaller && widget.userList != null) {
       isCalling = true;
-      callId = await ChatCallKitCallManager.startInviteUsers(widget.userList!);
+      callId = await ChatCallKitManager.startInviteUsers(widget.userList!);
     }
 
     currentList?.forEach((element) {
@@ -96,15 +96,15 @@ class _MultiCallPageState extends State<MultiCallPage> {
         MultiCallItemView(
           userId: current!,
           isWaiting: false,
-          videoView: ChatCallKitCallManager.getLocalVideoView(),
+          videoView: ChatCallKitManager.getLocalVideoView(),
         ));
     setState(() {});
   }
 
   void addCallKitListener() {
-    ChatCallKitCallManager.addEventListener(
+    ChatCallKitManager.addEventListener(
       "multi",
-      ChatCallKitCallKitEventHandler(
+      ChatCallKitEventHandler(
         onUserMuteAudio: (agoraUid, muted) {
           int index =
               list.indexWhere((element) => element.agoraUid == agoraUid);
@@ -133,7 +133,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
               agoraUid: agoraUid,
               userId: userId,
               isWaiting: false,
-              videoView: ChatCallKitCallManager.getRemoteVideoView(agoraUid),
+              videoView: ChatCallKitManager.getRemoteVideoView(agoraUid),
             ));
           });
         },
@@ -154,13 +154,13 @@ class _MultiCallPageState extends State<MultiCallPage> {
   }
 
   void removeCallKitListener() {
-    ChatCallKitCallManager.removeEventListener("multi");
+    ChatCallKitManager.removeEventListener("multi");
   }
 
   @override
   void dispose() {
     removeCallKitListener();
-    ChatCallKitCallManager.releaseRTC();
+    ChatCallKitManager.releaseRTC();
     super.dispose();
   }
 
@@ -294,7 +294,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
     return CallButton(
       selected: false,
       callback: () async {
-        await ChatCallKitCallManager.hangup(widget.callId ?? callId!);
+        await ChatCallKitManager.hangup(widget.callId ?? callId!);
       },
       selectImage: Image.asset("images/hang_up.png"),
       backgroundColor: const Color.fromRGBO(246, 50, 77, 1),
@@ -305,7 +305,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
     return CallButton(
       selected: false,
       callback: () async {
-        await ChatCallKitCallManager.answer(widget.callId!);
+        await ChatCallKitManager.answer(widget.callId!);
         setState(() => isCalling = true);
       },
       selectImage: Image.asset("images/answer.png"),
@@ -319,9 +319,9 @@ class _MultiCallPageState extends State<MultiCallPage> {
       callback: () async {
         cameraOn = !cameraOn;
         if (cameraOn) {
-          await ChatCallKitCallManager.cameraOn();
+          await ChatCallKitManager.cameraOn();
         } else {
-          await ChatCallKitCallManager.cameraOff();
+          await ChatCallKitManager.cameraOff();
         }
         String? currentUserId = ChatClient.getInstance.currentUserId;
         int index = list.indexWhere((element) =>
@@ -346,9 +346,9 @@ class _MultiCallPageState extends State<MultiCallPage> {
       callback: () async {
         mute = !mute;
         if (mute) {
-          await ChatCallKitCallManager.mute();
+          await ChatCallKitManager.mute();
         } else {
-          await ChatCallKitCallManager.unMute();
+          await ChatCallKitManager.unMute();
         }
         setState(() {});
       },
@@ -359,7 +359,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
 
   Widget switchCameraButton() {
     return button('switch_camera', () {
-      ChatCallKitCallManager.switchCamera();
+      ChatCallKitManager.switchCamera();
     });
   }
 
@@ -369,7 +369,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
         return const ContactPage(isMulti: true);
       })).then((value) {
         if (value != null && value is List<String>) {
-          ChatCallKitCallManager.startInviteUsers(value);
+          ChatCallKitManager.startInviteUsers(value);
           return value;
         }
       }).then((value) {

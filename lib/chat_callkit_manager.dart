@@ -1,8 +1,8 @@
-import 'agora_chat_callkit.dart';
+import 'chat_callkit.dart';
 
 import 'inherited/chat_callkit_manager_impl.dart';
 
-class ChatCallKitCallManager {
+class ChatCallKitManager {
   static ChatCallKitCallKitManagerImpl get _impl =>
       ChatCallKitCallKitManagerImpl.instance;
 
@@ -62,14 +62,14 @@ class ChatCallKitCallManager {
   }
 
   /// Turn on the camera, when you call it, the other party will receive
-  /// a [ChatCallKitCallKitEventHandler.onUserMuteVideo] callback.
+  /// a [ChatCallKitEventHandler.onUserMuteVideo] callback.
   static Future<void> cameraOn() async {
     await _impl.enableLocalView();
     await _impl.startPreview();
   }
 
   /// Turn off the camera, when you call it, the other party will receive
-  /// a [ChatCallKitCallKitEventHandler.onUserMuteVideo] callback.
+  /// a [ChatCallKitEventHandler.onUserMuteVideo] callback.
   static Future<void> cameraOff() async {
     await _impl.disableLocalView();
     await _impl.stopPreview();
@@ -93,13 +93,13 @@ class ChatCallKitCallManager {
   }
 
   /// Mute, mute the other party can not hear you, when you mute,
-  /// the other party will receive [ChatCallKitCallKitEventHandler.onUserMuteAudio] callback.
+  /// the other party will receive [ChatCallKitEventHandler.onUserMuteAudio] callback.
   static Future<void> mute() {
     return _impl.mute();
   }
 
   /// Unmute. When unmute, the other party can hear your voice. When you call unmute,
-  /// the other party will receive a [ChatCallKitCallKitEventHandler.onUserMuteAudio] callback.
+  /// the other party will receive a [ChatCallKitEventHandler.onUserMuteAudio] callback.
   static Future<void> unMute() {
     return _impl.unMute();
   }
@@ -132,10 +132,10 @@ class ChatCallKitCallManager {
   ///
   /// Param [identifier] The custom handler identifier, is used to find the corresponding handler.
   ///
-  /// Param [handler] The handle for callkit event. See [ChatCallKitCallKitEventHandler].
+  /// Param [handler] The handle for callkit event. See [ChatCallKitEventHandler].
   static void addEventListener(
     String identifier,
-    ChatCallKitCallKitEventHandler handler,
+    ChatCallKitEventHandler handler,
   ) {
     _impl.addEventListener(identifier, handler);
   }

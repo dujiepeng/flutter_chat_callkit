@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import '../agora_chat_callkit.dart';
+import '../chat_callkit.dart';
 
 import 'chat_callkit_call.dart';
 import 'chat_callkit_call_model.dart';

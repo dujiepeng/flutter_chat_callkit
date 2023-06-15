@@ -1,28 +1,28 @@
 # Get Started with Agora Chat CallKit for Flutter
 
-`agora_chat_callkit` is a video and audio component library built on top of `agora_chat_sdk` and `agora_rtc_engine`. It provides logical modules for making and receiving calls, including one-to-one voice calls, one-to-one video calls, group audio calls, and group video calls. It uses `agora_chat_sdk` to handle call invitations and negotiations. After negotiations are complete, the `ChatCallKitCallManager.setRTCTokenHandler` callback is triggered, and the Agora RTC token needs to be returned. The Agora RTC token must be provided by the developer.
+`agora_chat_callkit` is a video and audio component library built on top of `agora_chat_sdk` and `agora_rtc_engine`. It provides logical modules for making and receiving calls, including one-to-one voice calls, one-to-one video calls, group audio calls, and group video calls. It uses `agora_chat_sdk` to handle call invitations and negotiations. After negotiations are complete, the `ChatCallKitManager.setRTCTokenHandler` callback is triggered, and the Agora RTC token needs to be returned. The Agora RTC token must be provided by the developer.
 
 ## Understand the tech
 
-For a call, the call invitation is implemented via Agora Chat, while the call is made through Agora RTC. As the accounts of Agora RTC and Agora Chat are not globally recognizable at present, the accounts need to be mapped via the `ChatCallKitCallManager.setUserMapperHandler` callback in `agora_chat_callkit`. When a user joins the call, the Agora RTC user ID (UID) will be returned via the callback. After you get the corresponding Agora Chat user ID, you need to return it to `agora_chat_callkit`. If there is no mapping between the two user IDs, the call will not proceed properly. See `ChatCallKitCallUserMapper`.
+For a call, the call invitation is implemented via Agora Chat, while the call is made through Agora RTC. As the accounts of Agora RTC and Agora Chat are not globally recognizable at present, the accounts need to be mapped via the `ChatCallKitManager.setUserMapperHandler` callback in `agora_chat_callkit`. When a user joins the call, the Agora RTC user ID (UID) will be returned via the callback. After you get the corresponding Agora Chat user ID, you need to return it to `agora_chat_callkit`. If there is no mapping between the two user IDs, the call will not proceed properly. See `ChatCallKitCallUserMapper`.
 
 This section describes how to implement a one-to-one call or group call. 
 
-<div class="alert note">The `ChatCallKitCallManager.initRTC` method is called before a call is made or answered.</div>
+<div class="alert note">The `ChatCallKitManager.initRTC` method is called before a call is made or answered.</div>
 
 The basic process for implementing a one-to-one audio or video call is as follows:
 
-1. The caller calls the `ChatCallKitCallManager.startSingleCall` method to invite the callee to join the call. 
-2. The callee receives the call invitation through the `ChatCallKitCallKitEventHandler.onReceiveCall` callback and handles the call:
-   - To answer the call, the callee calls the `ChatCallKitCallManager.answer` method. The other party receives the `ChatCallKitCallKitEventHandler.onUserJoined` event and the call starts.
-   - To hang up the call, the callee calls the `ChatCallKitCallManager.releaseRTC` method. The other party receives the `ChatCallKitCallKitEventHandler.onCallEnd` event.
+1. The caller calls the `ChatCallKitManager.startSingleCall` method to invite the callee to join the call. 
+2. The callee receives the call invitation through the `ChatCallKitEventHandler.onReceiveCall` callback and handles the call:
+   - To answer the call, the callee calls the `ChatCallKitManager.answer` method. The other party receives the `ChatCallKitEventHandler.onUserJoined` event and the call starts.
+   - To hang up the call, the callee calls the `ChatCallKitManager.releaseRTC` method. The other party receives the `ChatCallKitEventHandler.onCallEnd` event.
 
 The basic process for implementing a group audio or video call is as follows:   
 
-1. The caller calls the `ChatCallKitCallManager.startInviteUsers` method to invite multiple users to join the call. 
-2. The callee receives the call invitation through the `ChatCallKitCallKitEventHandler.onReceiveCall` event and handles the call:
-  - To answer the call, the callee calls the `ChatCallKitCallManager.answer` method. The other parties receive the `ChatCallKitCallKitEventHandler.onUserJoined` event and the call starts.
-  - To hang up the call, the callee calls the `ChatCallKitCallManager.releaseRTC` method. Group calls do not end automatically, and therefore the users need to call this method to hang up the call. 
+1. The caller calls the `ChatCallKitManager.startInviteUsers` method to invite multiple users to join the call. 
+2. The callee receives the call invitation through the `ChatCallKitEventHandler.onReceiveCall` event and handles the call:
+  - To answer the call, the callee calls the `ChatCallKitManager.answer` method. The other parties receive the `ChatCallKitEventHandler.onUserJoined` event and the call starts.
+  - To hang up the call, the callee calls the `ChatCallKitManager.releaseRTC` method. Group calls do not end automatically, and therefore the users need to call this method to hang up the call. 
 
 <div class="alert note">When users join or leave the call, the UI should be modified accordingly.</div> 
 
@@ -135,13 +135,13 @@ class MyApp extends StatelessWidget {
 
 ### Add the Agora token callback
 
-Agora RTC needs a token and a channel ID to join a channel. Therefore, the two parameters are required when `agora_chat_callkit` is used. `agora_chat_callkit` gets the two parameters from the `ChatCallKitCallManager.setRTCTokenHandler` callback.
+Agora RTC needs a token and a channel ID to join a channel. Therefore, the two parameters are required when `agora_chat_callkit` is used. `agora_chat_callkit` gets the two parameters from the `ChatCallKitManager.setRTCTokenHandler` callback.
 
 ```
 // channel: The channel to join.
 // agoraAppId: The Agora app ID.
 // agoraUid: The user ID (UID) of Agora RTC.
-ChatCallKitCallManager.setRTCTokenHandler((channel, agoraAppId, agoraUid) {
+ChatCallKitManager.setRTCTokenHandler((channel, agoraAppId, agoraUid) {
   // agoraToken: The token of the Agora RTC user.
   // agoraUid: The user ID of Agora RTC.
   return Future(() => {agoraToken, agoraUid});
@@ -155,7 +155,7 @@ Set the callback of the mapping between the Agora RTC user ID and Agora Chat use
 ```
 // channel: The channel to which the Agora RTC user ID belongs.
 // agoraUid: The Agora RTC user ID that corresponds to the Agora Chat user ID.
-ChatCallKitCallManager.setUserMapperHandler((channel, agoraUid) {
+ChatCallKitManager.setUserMapperHandler((channel, agoraUid) {
   // channel: The channel to which the Agora RTC user ID belongs.
   // agoraUid: The Agora RTC user ID that corresponds to the Agora Chat user ID.
   // userId: The Agora Chat user ID that corresponds to the Agora RTC user ID.
@@ -165,19 +165,19 @@ ChatCallKitCallManager.setUserMapperHandler((channel, agoraUid) {
 
 ### Listen for callback events
 
-Add a `ChatCallKitCallKitEventHandler` listener by using the `ChatCallKitCallManager.addEventListener` method. Call `ChatCallKitCallManager.removeEventListener` to remove the listener when not in use.
+Add a `ChatCallKitEventHandler` listener by using the `ChatCallKitManager.addEventListener` method. Call `ChatCallKitManager.removeEventListener` to remove the listener when not in use.
 
 ```
-ChatCallKitCallManager.addEventListener(
+ChatCallKitManager.addEventListener(
   // Handler key. This key is used to ensure that the handler is unique.
   // This key is required when deleting the handler.
   UNIQUE_HANDLER_ID,
   // CallKit EventHandler.
-  ChatCallKitCallKitEventHandler(),
+  ChatCallKitEventHandler(),
 );
 ```
 
-`ChatCallKitCallKitEventHandler` is described as follows:
+`ChatCallKitEventHandler` is described as follows:
 
 ```
   /// ChatCallKitCallKit event handler.
@@ -202,7 +202,7 @@ ChatCallKitCallManager.addEventListener(
   ///
   /// Param [onAnswer] Occurs when the call is answered.
   ///
-  ChatCallKitCallKitEventHandler({
+  ChatCallKitEventHandler({
     this.onError,
     this.onCallEnd,
     this.onReceiveCall,
@@ -231,18 +231,18 @@ ChatCallKitCallManager.addEventListener(
 
 ### Start a call 
 
-Before making or answering a call, you need to first call the `ChatCallKitCallManager.initRTC` method to initialize Agora RTC. 
+Before making or answering a call, you need to first call the `ChatCallKitManager.initRTC` method to initialize Agora RTC. 
 
 #### Start a one-to-one call
 
-Call the `ChatCallKitCallManager.startSingleCall` method to make a one-to-one call. This method returns the `callId` parameter which can be used by the caller to hang up the call. The callee receives the `onReceiveCall` event.
+Call the `ChatCallKitManager.startSingleCall` method to make a one-to-one call. This method returns the `callId` parameter which can be used by the caller to hang up the call. The callee receives the `onReceiveCall` event.
 
 ```
-await ChatCallKitCallManager.initRTC();
+await ChatCallKitManager.initRTC();
 try {
   // userId: The Agora Chat user ID of the callee.
   // type: The call type, which can be `ChatCallKitCallType.audio_1v1` or `ChatCallKitCallType.video_1v1`. 
-  String callId = await ChatCallKitCallManager.startSingleCall(
+  String callId = await ChatCallKitManager.startSingleCall(
     userId,
     type: ChatCallKitCallType.audio_1v1,
   );
@@ -253,14 +253,14 @@ try {
 
 #### Start a group call
 
-To make a group call, you can call the `await ChatCallKitCallManager.startInviteUsers` method to invite users to join
+To make a group call, you can call the `await ChatCallKitManager.startInviteUsers` method to invite users to join
  the call. This method returns the `callId` parameter which can be used by the caller to hang up the call. The callees receive the `onReceiveCall` event.
 
 ```
-await ChatCallKitCallManager.initRTC();
+await ChatCallKitManager.initRTC();
 try {
   // userList: The Agora Chat user IDs of the callees.
-  String callId = await ChatCallKitCallManager.startInviteUsers(userList);
+  String callId = await ChatCallKitManager.startInviteUsers(userList);
 } on ChatCallKitError catch (e) {
   ...
 }
@@ -268,16 +268,16 @@ try {
 
 ### Receive a call
 
-To listen for the received call invitation, the users need to first add a `ChatCallKitCallKitEventHandler` listener by using the `ChatCallKitCallManager.addEventListener` method. Call `ChatCallKitCallManager.removeEventListener` to remove the listener when not in use.
+To listen for the received call invitation, the users need to first add a `ChatCallKitEventHandler` listener by using the `ChatCallKitManager.addEventListener` method. Call `ChatCallKitManager.removeEventListener` to remove the listener when not in use.
 
 In either a one-to-one call or group call, once a call invitation is sent, the callee receives the invitation in the `onReceiveCall` callback. The audio or video page can be displayed, depending on the call type.
 
 ```
-ChatCallKitCallManager.addEventListener(
+ChatCallKitManager.addEventListener(
   // Handler key. This key is used to ensure that the handler is unique.
   // This key is required when deleting the handler.
   UNIQUE_HANDLER_ID,
-  ChatCallKitCallKitEventHandler(
+  ChatCallKitEventHandler(
     // Occurs when you receive a call invitation.
     onReceiveCall(String userId, String callId, ChatCallKitCallType callType, Map<String, String>? ext) {
       // Receive a call.
@@ -288,103 +288,103 @@ ChatCallKitCallManager.addEventListener(
 
 The callee needs to choose whether to answer or reject the call:
 
-- To answer a call, call the `ChatCallKitCallManager.initRTC` method first and then the `answer` method.
+- To answer a call, call the `ChatCallKitManager.initRTC` method first and then the `answer` method.
 
 In a one-to-one call, both the caller and callee receive the `onAnswer` event. In a group call, the new user that joins the call receives the `onUserJoined` event and other users in the call receive the `onJoinedChannel` event.
 
 ```
-await ChatCallKitCallManager.initRTC();
+await ChatCallKitManager.initRTC();
 try {
   // callId: The call ID which can be obtained from the onReceiveCall callback.
-  await ChatCallKitCallManager.answer(callId);
+  await ChatCallKitManager.answer(callId);
 } on ChatCallKitError catch (e) {
   ...
 }
 ```
 
-- To reject the call, call the `ChatCallKitCallManager.releaseRTC` method:
+- To reject the call, call the `ChatCallKitManager.releaseRTC` method:
 
 For a one-to-one call, the caller receives the `onError` event. For a group call, other users than the callee receive the `onUserRemoved` event.
 
 ```
 try {
   // callId: The call ID which can be obtained via the `onReceiveCall` callback.
-  await ChatCallKitCallManager.hangup(callId);
+  await ChatCallKitManager.hangup(callId);
 } on ChatCallKitError catch (e) {
   ...
 }
-await ChatCallKitCallManager.releaseRTC();
+await ChatCallKitManager.releaseRTC();
 ```
 
 ### End the call
 
 A one-to-one call ends as soon as one of the two users hangs up, while a group call ends only after the local user hangs up.
 
-For a one-to-one call, either the caller or callee can call the `ChatCallKitCallManager.releaseRTC` method to end the call. When one party ends the call, the other party receives the `onCallEnd` event.
+For a one-to-one call, either the caller or callee can call the `ChatCallKitManager.releaseRTC` method to end the call. When one party ends the call, the other party receives the `onCallEnd` event.
 
-For a group call, when a user calls the `ChatCallKitCallManager.releaseRTC` method to leave a call, other users in the call receive the `onUserLeaved` event.
+For a group call, when a user calls the `ChatCallKitManager.releaseRTC` method to leave a call, other users in the call receive the `onUserLeaved` event.
 
 ## Next steps
 
 ### Turn on or off the speaker
 
-You can call the `ChatCallKitCallManager.speakerOn` or `ChatCallKitCallManager.speakerOff` method to turn on or turn off the speaker during a call. 
+You can call the `ChatCallKitManager.speakerOn` or `ChatCallKitManager.speakerOff` method to turn on or turn off the speaker during a call. 
 
 ```
-await ChatCallKitCallManager.speakerOn();
-await ChatCallKitCallManager.speakerOff();
+await ChatCallKitManager.speakerOn();
+await ChatCallKitManager.speakerOff();
 ```
 
 ### Mute or unmute the microphone
 
-You can call the `ChatCallKitCallManager.mute` or `ChatCallKitCallManager.unMute` method to mute or unmute the microphone during a call. When the microphone status changes, the peer user in the one-to-one call or other users in the group call receive the `ChatCallKitCallKitEventHandler.onUserMuteAudio` event.
+You can call the `ChatCallKitManager.mute` or `ChatCallKitManager.unMute` method to mute or unmute the microphone during a call. When the microphone status changes, the peer user in the one-to-one call or other users in the group call receive the `ChatCallKitEventHandler.onUserMuteAudio` event.
 
 ```
-await ChatCallKitCallManager.mute();
-await ChatCallKitCallManager.unMute();
+await ChatCallKitManager.mute();
+await ChatCallKitManager.unMute();
 ```
 
 ### Turn on or off the camera
 
-You can call the `ChatCallKitCallManager.cameraOn` or `ChatCallKitCallManager.cameraOff` method to turn on or turn off the camera. The peer user in the one-to-one call or other users in the group call receive the `ChatCallKitCallKitEventHandler.onUserMuteVideo` event.
+You can call the `ChatCallKitManager.cameraOn` or `ChatCallKitManager.cameraOff` method to turn on or turn off the camera. The peer user in the one-to-one call or other users in the group call receive the `ChatCallKitEventHandler.onUserMuteVideo` event.
 
 ```
-await ChatCallKitCallManager.cameraOn();
-await ChatCallKitCallManager.cameraOff();
+await ChatCallKitManager.cameraOn();
+await ChatCallKitManager.cameraOff();
 ```
 
 ### Switch the camera
 
-You can call the `ChatCallKitCallManager.switchCamera` method to switch the front and rear cameras.
+You can call the `ChatCallKitManager.switchCamera` method to switch the front and rear cameras.
 
 ```
-await ChatCallKitCallManager.switchCamera();
+await ChatCallKitManager.switchCamera();
 ```
 
 ### Get the local preview view  
 
-When making a one-to-one video call or group call, you can call the `ChatCallKitCallManager.getLocalVideoView` method to obtain the local camera preview widget.
+When making a one-to-one video call or group call, you can call the `ChatCallKitManager.getLocalVideoView` method to obtain the local camera preview widget.
 
 ```
-Widget? localPreviewWidget = ChatCallKitCallManager.getLocalVideoView();
+Widget? localPreviewWidget = ChatCallKitManager.getLocalVideoView();
 ```
 
 ### Get the remote video view
 
-During a one-to-one video call or group call, if a user joins the call, you can call the `ChatCallKitCallManager.getRemoteVideoView` method to obtain the video widget of this user.
+During a one-to-one video call or group call, if a user joins the call, you can call the `ChatCallKitManager.getRemoteVideoView` method to obtain the video widget of this user.
 
 ```
 // agoraUid: The Agora RTF user ID of a user in the call.
-Widget? remoteVideoWidget = ChatCallKitCallManager.getRemoteVideoView(agoraUid);
+Widget? remoteVideoWidget = ChatCallKitManager.getRemoteVideoView(agoraUid);
 ```
 
 ### Delete the listener handler
 
-You can call the `ChatCallKitCallManager.removeEventListener` method to remove callbacks when the callkit is no longer needed.
+You can call the `ChatCallKitManager.removeEventListener` method to remove callbacks when the callkit is no longer needed.
 
 ```
-// UNIQUE_HANDLER_ID: The key that was set when you added ChatCallKitCallKitEventHandler.
-ChatCallKitCallManager.removeEventListener(UNIQUE_HANDLER_ID);
+// UNIQUE_HANDLER_ID: The key that was set when you added ChatCallKitEventHandler.
+ChatCallKitManager.removeEventListener(UNIQUE_HANDLER_ID);
 ```
 
 ## Push notifications
@@ -399,7 +399,7 @@ Once push notifications are enabled, when a call invitation arrives, a notificat
 
 This section provides other reference information that you can refer to when implementing real-time audio and video communications functionalities.
 
-In `agora_chat_callkit`, `ChatCallKitCallManager` provides the following APIs:
+In `agora_chat_callkit`, `ChatCallKitManager` provides the following APIs:
 
 |  Method          | Description              |
 | :-------------------------- | :------------------ |
@@ -420,7 +420,7 @@ In `agora_chat_callkit`, `ChatCallKitCallManager` provides the following APIs:
 | getLocalVideoView  | Gets the local video view.            |
 | getRemoteVideoView    | Gets the remote video view.          |
 
-`ChatCallKitCallKitEventHandler` contains call-related events. For details, see [Listen for callback events](#Listen for callback events).
+`ChatCallKitEventHandler` contains call-related events. For details, see [Listen for callback events](#Listen for callback events).
 
 ### Sample project
 

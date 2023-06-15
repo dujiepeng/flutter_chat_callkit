@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:example/tools/request_tool.dart';
 import 'package:flutter/material.dart';
-import 'package:agora_chat_callkit/agora_chat_callkit.dart';
+import 'package:agora_chat_callkit/chat_callkit.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'call_pages/multi_call_page.dart';
@@ -60,19 +60,19 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     // set agoraToken request handler.
-    ChatCallKitCallManager.setRTCTokenHandler((channel, agoraAppId) {
+    ChatCallKitManager.setRTCTokenHandler((channel, agoraAppId) {
       return requestAppServerToken(channel, Random().nextInt(999999));
     });
 
     // set agoraUid and userId mapper handler.
-    ChatCallKitCallManager.setUserMapperHandler((channel, agoraUid) {
+    ChatCallKitManager.setUserMapperHandler((channel, agoraUid) {
       return requestAppServerUserMapper(channel, agoraUid);
     });
 
     // add event listener.
-    ChatCallKitCallManager.addEventListener(
+    ChatCallKitManager.addEventListener(
       "UNIQUE_HANDLER_ID",
-      ChatCallKitCallKitEventHandler(
+      ChatCallKitEventHandler(
         onReceiveCall: onReceiveCall,
       ),
     );
@@ -306,7 +306,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    ChatCallKitCallManager.removeEventListener("UNIQUE_HANDLER_ID");
+    ChatCallKitManager.removeEventListener("UNIQUE_HANDLER_ID");
     super.dispose();
   }
 

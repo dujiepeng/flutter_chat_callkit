@@ -1,4 +1,4 @@
-import '../agora_chat_callkit.dart';
+import '../chat_callkit.dart';
 
 import 'chat_callkit_chat_manager.dart';
 import 'chat_callkit_enum.dart';
@@ -11,7 +11,7 @@ class ChatCallKitCallKitManagerImpl {
     return _instance!;
   }
 
-  Map<String, ChatCallKitCallKitEventHandler> handlerMap = {};
+  Map<String, ChatCallKitEventHandler> handlerMap = {};
   RtcTokenHandler? rtcTokenHandler;
   UserMapperHandler? userMapperHandler;
 
@@ -128,7 +128,7 @@ class ChatCallKitCallKitManagerImpl {
     return _chat.answerCall(callId);
   }
 
-  void addEventListener(String key, ChatCallKitCallKitEventHandler handler) {
+  void addEventListener(String key, ChatCallKitEventHandler handler) {
     handlerMap[key] = handler;
   }
 

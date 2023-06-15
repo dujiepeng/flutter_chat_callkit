@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:agora_chat_callkit/agora_chat_callkit.dart';
+import 'package:agora_chat_callkit/chat_callkit.dart';
 import 'package:example/call_pages/call_button.dart';
 import 'package:example/tools/format_time_tool.dart';
 
@@ -151,7 +151,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
         currentType = SingleCallType.videoCallOutHolding;
       }
     }
-    ChatCallKitCallManager.initRTC().then((value) {
+    ChatCallKitManager.initRTC().then((value) {
       setState(() {
         hasInit = true;
       });
@@ -176,14 +176,14 @@ class _SingleCallPageState extends State<SingleCallPage> {
   }
 
   void answer() async {
-    await ChatCallKitCallManager.answer(widget.callId!);
+    await ChatCallKitManager.answer(widget.callId!);
     holding = false;
     setState(() {});
   }
 
   void call() async {
     try {
-      callId = await ChatCallKitCallManager.startSingleCall(
+      callId = await ChatCallKitManager.startSingleCall(
         widget.userId,
         type: widget.type,
       );
@@ -193,9 +193,9 @@ class _SingleCallPageState extends State<SingleCallPage> {
   }
 
   void addListener() {
-    ChatCallKitCallManager.addEventListener(
+    ChatCallKitManager.addEventListener(
       "key",
-      ChatCallKitCallKitEventHandler(
+      ChatCallKitEventHandler(
         onError: (error) => Navigator.of(context).pop(
           CallEndInfo(
             callId: callId,
@@ -220,7 +220,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
   }
 
   void removeListener() {
-    ChatCallKitCallManager.removeEventListener("key");
+    ChatCallKitManager.removeEventListener("key");
   }
 
   void onUserMuteAudio(int agoraUid, bool muted) {
@@ -234,7 +234,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
     if (muted) {
       remoteVideoWidget = Container(color: Colors.black);
     } else {
-      remoteVideoWidget = ChatCallKitCallManager.getRemoteVideoView(agoraUid);
+      remoteVideoWidget = ChatCallKitManager.getRemoteVideoView(agoraUid);
     }
 
     setState(() {});
@@ -267,7 +267,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
   void dispose() {
     stopTimer();
     removeListener();
-    ChatCallKitCallManager.releaseRTC();
+    ChatCallKitManager.releaseRTC();
     super.dispose();
   }
 
@@ -366,7 +366,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
 
   Widget localWidget() {
     return cameraOn
-        ? ChatCallKitCallManager.getLocalVideoView() ??
+        ? ChatCallKitManager.getLocalVideoView() ??
             Container(color: Colors.black)
         : Container(color: Colors.black);
   }
@@ -545,9 +545,9 @@ class _SingleCallPageState extends State<SingleCallPage> {
       callback: () async {
         cameraOn = !cameraOn;
         if (cameraOn) {
-          await ChatCallKitCallManager.cameraOn();
+          await ChatCallKitManager.cameraOn();
         } else {
-          await ChatCallKitCallManager.cameraOff();
+          await ChatCallKitManager.cameraOff();
         }
         setState(() {});
       },
@@ -561,7 +561,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
   Widget switchCameraButton() {
     return InkWell(
       onTap: () {
-        ChatCallKitCallManager.switchCamera();
+        ChatCallKitManager.switchCamera();
       },
       child: Container(
         width: 40,
@@ -579,7 +579,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
     return CallButton(
       selected: false,
       callback: () async {
-        await ChatCallKitCallManager.hangup(widget.callId ?? callId!);
+        await ChatCallKitManager.hangup(widget.callId ?? callId!);
       },
       selectImage: Image.asset("images/hang_up.png"),
       backgroundColor: const Color.fromRGBO(246, 50, 77, 1),
@@ -590,7 +590,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
     return CallButton(
       selected: false,
       callback: () async {
-        await ChatCallKitCallManager.answer(widget.callId!);
+        await ChatCallKitManager.answer(widget.callId!);
         holding = false;
         setState(() {
           if (widget.type == ChatCallKitCallType.audio_1v1) {
@@ -611,9 +611,9 @@ class _SingleCallPageState extends State<SingleCallPage> {
       callback: () async {
         mute = !mute;
         if (mute) {
-          await ChatCallKitCallManager.mute();
+          await ChatCallKitManager.mute();
         } else {
-          await ChatCallKitCallManager.unMute();
+          await ChatCallKitManager.unMute();
         }
         setState(() {});
       },
@@ -628,9 +628,9 @@ class _SingleCallPageState extends State<SingleCallPage> {
       callback: () async {
         speakerOn = !speakerOn;
         if (speakerOn) {
-          await ChatCallKitCallManager.speakerOn();
+          await ChatCallKitManager.speakerOn();
         } else {
-          await ChatCallKitCallManager.speakerOff();
+          await ChatCallKitManager.speakerOff();
         }
         setState(() {});
       },
