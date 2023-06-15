@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 
-import '../chat_callkit.dart';
+import '../agora_chat_callkit.dart';
 
 import 'chat_callkit_call.dart';
 import 'chat_callkit_call_model.dart';
@@ -72,7 +72,7 @@ class AgoraChatManager {
   }
 
   late ChatCallKitCallModel model;
-  final String key = "ChatCallKitCallKit";
+  final String key = "ChatCallKit";
   final AgoraChatEventHandler handler;
   Duration timeoutDuration = const Duration(seconds: 30);
 

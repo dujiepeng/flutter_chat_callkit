@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../chat_callkit.dart';
+import '../agora_chat_callkit.dart';
 import 'chat_callkit_log_tool.dart';
 
 class RTCOptions {

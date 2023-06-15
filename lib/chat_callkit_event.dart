@@ -1,9 +1,9 @@
 import 'chat_callkit_define.dart';
 import 'chat_callkit_error.dart';
 
-/// ChatCallKitCallKit event handler.
+/// ChatCallKit event handler.
 class ChatCallKitEventHandler {
-  /// ChatCallKitCallKit event handler.
+  /// ChatCallKit event handler.
   ///
   /// Param [onError] Call back when the call fails, See [ChatCallKitError].
   ///

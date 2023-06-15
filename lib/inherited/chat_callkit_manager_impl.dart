@@ -1,13 +1,13 @@
-import '../chat_callkit.dart';
+import '../agora_chat_callkit.dart';
 
 import 'chat_callkit_chat_manager.dart';
 import 'chat_callkit_enum.dart';
 import 'chat_callkit_rtc_manager.dart';
 
-class ChatCallKitCallKitManagerImpl {
-  static ChatCallKitCallKitManagerImpl? _instance;
-  static ChatCallKitCallKitManagerImpl get instance {
-    _instance ??= ChatCallKitCallKitManagerImpl();
+class ChatCallKitManagerImpl {
+  static ChatCallKitManagerImpl? _instance;
+  static ChatCallKitManagerImpl get instance {
+    _instance ??= ChatCallKitManagerImpl();
     return _instance!;
   }
 
@@ -18,7 +18,7 @@ class ChatCallKitCallKitManagerImpl {
   late final AgoraChatManager _chat;
   late final AgoraRTCManager _rtc;
 
-  ChatCallKitCallKitManagerImpl() {
+  ChatCallKitManagerImpl() {
     _chat = AgoraChatManager(
         AgoraChatEventHandler(
           onCallAccept: () {
@@ -166,7 +166,7 @@ class ChatCallKitCallKitManagerImpl {
   }
 }
 
-extension ChatEvent on ChatCallKitCallKitManagerImpl {
+extension ChatEvent on ChatCallKitManagerImpl {
   Future<ChatCallKitCallUserMapper?> updateUserMapper(int agoraUid) async {
     String? userId = ChatClient.getInstance.currentUserId;
 
@@ -273,7 +273,7 @@ extension ChatEvent on ChatCallKitCallKitManagerImpl {
   }
 }
 
-extension RTCEvent on ChatCallKitCallKitManagerImpl {
+extension RTCEvent on ChatCallKitManagerImpl {
   void onJoinChannelSuccess() async {
     if (_chat.model.curCall == null) return;
     await setDefaultModeType();
@@ -388,7 +388,7 @@ extension RTCEvent on ChatCallKitCallKitManagerImpl {
   }
 }
 
-extension RTCAction on ChatCallKitCallKitManagerImpl {
+extension RTCAction on ChatCallKitManagerImpl {
   Future<void> startPreview() => _rtc.startPreview();
   Future<void> stopPreview() => _rtc.stopPreview();
   Future<void> switchCamera() => _rtc.switchCamera();

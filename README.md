@@ -106,7 +106,7 @@ In the example/android/app/proguard-rules.pro file, add the following lines to p
 
 ## Implement audio and video calling
 
-You need to make sure that the Agora Chat SDK is initialized before calling ChatCallKitCallKit and ChatCallKitCallKit widget at the top of your widget tree. You can add it in the `MaterialApp` builder.
+You need to make sure that the Agora Chat SDK is initialized before calling ChatCallKit and ChatCallKit widget at the top of your widget tree. You can add it in the `MaterialApp` builder.
 
 ```
 import 'package:agora_chat_callkit/agora_chat_callkit.dart';
@@ -122,7 +122,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       builder: (context, child){
-         return ChatCallKitCallKit(
+         return ChatCallKit(
             agoraAppId: <--Add Your Agora App Id Here-->,
             child: child!,
           );
@@ -180,7 +180,7 @@ ChatCallKitManager.addEventListener(
 `ChatCallKitEventHandler` is described as follows:
 
 ```
-  /// ChatCallKitCallKit event handler.
+  /// ChatCallKit event handler.
   ///
   /// Param [onError] Occurs when the call fails. See [ChatCallKitError].
   ///

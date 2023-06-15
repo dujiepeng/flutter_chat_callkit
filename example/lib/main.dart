@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:example/tools/request_tool.dart';
 import 'package:flutter/material.dart';
-import 'package:agora_chat_callkit/chat_callkit.dart';
+import 'package:agora_chat_callkit/agora_chat_callkit.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'call_pages/multi_call_page.dart';
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: (context, child) {
-        return ChatCallKitCallKit(
+        return ChatCallKit(
           agoraAppId: Config.agoraAppId,
           timeoutDuration: const Duration(seconds: 30),
           child: child!,

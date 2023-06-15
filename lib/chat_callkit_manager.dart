@@ -1,10 +1,9 @@
-import 'chat_callkit.dart';
+import 'agora_chat_callkit.dart';
 
 import 'inherited/chat_callkit_manager_impl.dart';
 
 class ChatCallKitManager {
-  static ChatCallKitCallKitManagerImpl get _impl =>
-      ChatCallKitCallKitManagerImpl.instance;
+  static ChatCallKitManagerImpl get _impl => ChatCallKitManagerImpl.instance;
 
   /// Initiate a 1v1 call.
   ///

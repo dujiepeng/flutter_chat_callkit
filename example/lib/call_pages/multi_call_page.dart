@@ -1,4 +1,4 @@
-import 'package:agora_chat_callkit/chat_callkit.dart';
+import 'package:agora_chat_callkit/agora_chat_callkit.dart';
 import 'package:example/call_pages/call_button.dart';
 import 'package:example/call_pages/multi_call_item_view.dart';
 import 'package:example/call_pages/multi_call_view.dart';

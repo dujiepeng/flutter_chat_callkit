@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
-import 'package:agora_chat_callkit/chat_callkit.dart';
+import 'package:agora_chat_callkit/agora_chat_callkit.dart';
 
 import '../config.dart';
 

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../inherited/chat_callkit_manager_impl.dart';
 
-class ChatCallKitCallKit extends StatefulWidget {
-  const ChatCallKitCallKit({
+class ChatCallKit extends StatefulWidget {
+  const ChatCallKit({
     required this.agoraAppId,
     required this.child,
     this.timeoutDuration = const Duration(seconds: 30),
@@ -15,25 +15,25 @@ class ChatCallKitCallKit extends StatefulWidget {
   final Duration timeoutDuration;
 
   @override
-  State<ChatCallKitCallKit> createState() => ChatCallKitCallKitState();
+  State<ChatCallKit> createState() => ChatCallKitState();
 
-  static ChatCallKitCallKitState of(BuildContext context) {
-    ChatCallKitCallKitState? state;
-    state = context.findAncestorStateOfType<ChatCallKitCallKitState>();
+  static ChatCallKitState of(BuildContext context) {
+    ChatCallKitState? state;
+    state = context.findAncestorStateOfType<ChatCallKitState>();
     assert(
       state != null,
-      'You must have a ChatCallKitCallKit widget at the top of you widget tree',
+      'You must have a ChatCallKit widget at the top of you widget tree',
     );
 
     return state!;
   }
 }
 
-class ChatCallKitCallKitState extends State<ChatCallKitCallKit> {
+class ChatCallKitState extends State<ChatCallKit> {
   @override
   void initState() {
-    ChatCallKitCallKitManagerImpl.instance.agoraAppId = widget.agoraAppId;
-    ChatCallKitCallKitManagerImpl.instance.callTimeout = widget.timeoutDuration;
+    ChatCallKitManagerImpl.instance.agoraAppId = widget.agoraAppId;
+    ChatCallKitManagerImpl.instance.callTimeout = widget.timeoutDuration;
     super.initState();
   }
 
