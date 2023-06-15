@@ -1,13 +1,14 @@
 import 'dart:async';
 
-import 'package:agora_chat_callkit/agora_chat_callkit.dart';
-import 'package:agora_chat_callkit/inherited/agora_chat_call.dart';
-import 'package:agora_chat_callkit/inherited/agora_chat_call_model.dart';
-import 'package:agora_chat_callkit/inherited/tools/agora_chat_callkit_tools.dart';
 import 'package:flutter/foundation.dart';
 
-import 'agora_chat_call_enum.dart';
-import 'agora_chat_log_tool.dart';
+import '../agora_chat_callkit.dart';
+
+import 'chat_callkit_call.dart';
+import 'chat_callkit_call_model.dart';
+import 'chat_callkit_enum.dart';
+import 'chat_callkit_log_tool.dart';
+import 'tools/chat_callkit_tools.dart';
 
 String kAction = "action";
 String kChannelName = "channelName";
@@ -33,14 +34,14 @@ String kMsgTypeValue = "rtcCallWithAgora";
 String kExt = "ext";
 
 class AgoraChatEventHandler {
-  final void Function(AgoraChatCallError error) onError;
-  final void Function(String callId, AgoraChatCallEndReason reason)
+  final void Function(ChatCallKitError error) onError;
+  final void Function(String callId, ChatCallKitCallEndReason reason)
       onCallEndReason;
   final VoidCallback onCallAccept;
   final void Function(
     String callId,
     String userId,
-    AgoraChatCallEndReason reason,
+    ChatCallKitCallEndReason reason,
   ) onUserRemoved;
 
   final void Function(String callId) onAnswer;
@@ -65,13 +66,13 @@ class AgoraChatEventHandler {
 /// 8. receive, send device id to callee.
 
 class AgoraChatManager {
-  AgoraChatManager(this.handler, AgoraChatCallStateChange stateChange) {
+  AgoraChatManager(this.handler, ChatCallKitStateChange stateChange) {
     registerChatEvent();
-    model = AgoraChatCallModel(stateChanged: stateChange);
+    model = ChatCallKitCallModel(stateChanged: stateChange);
   }
 
-  late AgoraChatCallModel model;
-  final String key = "AgoraChatCallKit";
+  late ChatCallKitCallModel model;
+  final String key = "ChatCallKitCallKit";
   final AgoraChatEventHandler handler;
   Duration timeoutDuration = const Duration(seconds: 30);
 
@@ -86,7 +87,7 @@ class AgoraChatManager {
   Timer? confirmTimer;
 
   bool get busy {
-    return model.curCall != null && model.state != AgoraChatCallState.idle;
+    return model.curCall != null && model.state != ChatCallKitCallState.idle;
   }
 
   void chatLog(String method, ChatMessage msg) {
@@ -99,11 +100,11 @@ class AgoraChatManager {
 
   void clearInfo() {
     if (model.curCall != null) {
-      model.state = AgoraChatCallState.idle;
+      model.state = ChatCallKitCallState.idle;
     }
   }
 
-  void onStateChange(AgoraChatCallState state) {
+  void onStateChange(ChatCallKitCallState state) {
     model.state = state;
   }
 
@@ -129,7 +130,7 @@ class AgoraChatManager {
     final isValid = ext[kCallStatus] ?? false;
     num type = ext[kCallType] ?? 0;
 
-    final callType = AgoraChatCallType.values[type.toInt()];
+    final callType = ChatCallKitCallType.values[type.toInt()];
     Map<String, String>? callExt = (ext[kExt] ?? {}).cast<String, String>();
 
     // 收到邀请
@@ -145,7 +146,7 @@ class AgoraChatManager {
       }
 
       // 将邀请放到收到的call中
-      model.recvCalls[callId] = AgoraChatCall(
+      model.recvCalls[callId] = ChatCallKitCall(
         callId: callId,
         remoteUserAccount: from,
         remoteCallDevId: callerDevId,
@@ -194,7 +195,7 @@ class AgoraChatManager {
           if (isValid) {
             model.curCall = model.recvCalls[callId];
             model.recvCalls.clear();
-            model.state = AgoraChatCallState.alerting;
+            model.state = ChatCallKitCallState.alerting;
             alertTimerDic.forEach((key, value) {
               value.cancel();
             });
@@ -207,9 +208,9 @@ class AgoraChatManager {
             if (model.curCall?.callId == callId) {
               handler.onCallEndReason.call(
                 model.curCall!.callId,
-                AgoraChatCallEndReason.remoteNoResponse,
+                ChatCallKitCallEndReason.remoteNoResponse,
               );
-              model.state = AgoraChatCallState.idle;
+              model.state = ChatCallKitCallState.idle;
             }
           });
         }
@@ -223,8 +224,8 @@ class AgoraChatManager {
         confirmTimer?.cancel();
         confirmTimer = null;
         handler.onCallEndReason
-            .call(model.curCall!.callId, AgoraChatCallEndReason.remoteCancel);
-        model.state = AgoraChatCallState.idle;
+            .call(model.curCall!.callId, ChatCallKitCallEndReason.remoteCancel);
+        model.state = ChatCallKitCallState.idle;
       } else {
         model.recvCalls.remove(callId);
       }
@@ -235,10 +236,10 @@ class AgoraChatManager {
     void parseAnswerMsgExt() {
       if (model.curCall?.callId == callId && model.curDevId == callerDevId) {
         // 如果为多人模式
-        if (model.curCall?.callType == AgoraChatCallType.multi) {
+        if (model.curCall?.callType == ChatCallKitCallType.multi) {
           // 对方拒绝
           if (result != kAcceptResult) {
-            removeUser(from, AgoraChatCallEndReason.busy);
+            removeUser(from, ChatCallKitCallEndReason.busy);
           }
 
           Timer? timer = callTimerDic.remove(from);
@@ -246,7 +247,7 @@ class AgoraChatManager {
             timer.cancel();
             sendConfirmAnswerMsgToCallee(from, callId, result, calleeDevId);
             if (result == kAcceptResult) {
-              model.state = AgoraChatCallState.answering;
+              model.state = ChatCallKitCallState.answering;
               ringTimer?.cancel();
               ringTimer = null;
             }
@@ -254,19 +255,19 @@ class AgoraChatManager {
           onAnswer();
         } else {
           // 非多人模式，是呼出状态时
-          if (model.state == AgoraChatCallState.outgoing) {
+          if (model.state == ChatCallKitCallState.outgoing) {
             if (result == kAcceptResult) {
-              model.state = AgoraChatCallState.answering;
+              model.state = ChatCallKitCallState.answering;
               ringTimer?.cancel();
               ringTimer = null;
             } else {
               handler.onCallEndReason.call(
                 model.curCall!.callId,
                 result == kRefuseResult
-                    ? AgoraChatCallEndReason.refuse
-                    : AgoraChatCallEndReason.busy,
+                    ? ChatCallKitCallEndReason.refuse
+                    : ChatCallKitCallEndReason.busy,
               );
-              model.state = AgoraChatCallState.idle;
+              model.state = ChatCallKitCallState.idle;
             }
           }
           onAnswer();
@@ -277,24 +278,24 @@ class AgoraChatManager {
     }
 
     void parseConfirmCalleeMsgExt() {
-      if (model.state == AgoraChatCallState.alerting &&
+      if (model.state == ChatCallKitCallState.alerting &&
           model.curCall?.callId == callId) {
         confirmTimer?.cancel();
         confirmTimer = null;
         if (model.curDevId == calleeDevId) {
           if (result == kAcceptResult) {
-            model.state = AgoraChatCallState.answering;
+            model.state = ChatCallKitCallState.answering;
             ringTimer?.cancel();
             ringTimer = null;
-            if (model.curCall?.callType != AgoraChatCallType.audio_1v1) {
+            if (model.curCall?.callType != ChatCallKitCallType.audio_1v1) {
               // 更新本地摄像头数据
             }
             handler.onCallAccept.call();
             // 此处要开始获取声网token。
           } else {
-            model.state = AgoraChatCallState.idle;
+            model.state = ChatCallKitCallState.idle;
             handler.onCallEndReason.call(model.curCall!.callId,
-                AgoraChatCallEndReason.handleOnOtherDevice);
+                ChatCallKitCallEndReason.handleOnOtherDevice);
           }
         }
       } else {
@@ -327,12 +328,12 @@ class AgoraChatManager {
     }
   }
 
-  Future<void> sendInviteMsgToCallee(String userId, AgoraChatCallType type,
+  Future<void> sendInviteMsgToCallee(String userId, ChatCallKitCallType type,
       String callId, String channel, Map<String, String>? ext) async {
     String sType = 'voice';
-    if (type == AgoraChatCallType.multi) {
+    if (type == ChatCallKitCallType.multi) {
       sType = 'conference';
-    } else if (type == AgoraChatCallType.video_1v1) {
+    } else if (type == ChatCallKitCallType.video_1v1) {
       sType = 'video';
     }
     final msg = ChatMessage.createTxtSendMessage(
@@ -467,7 +468,7 @@ class AgoraChatManager {
 
     ChatClient.getInstance.chatManager.addMessageEvent(key, ChatMessageEvent(
       onError: (msgId, msg, error) {
-        handler.onError(AgoraChatCallError.im(error.code, error.description));
+        handler.onError(ChatCallKitError.im(error.code, error.description));
       },
     ));
   }
@@ -510,28 +511,28 @@ class AgoraChatManager {
 
   Future<String> startSingleCall(
     String userId, {
-    AgoraChatCallType type = AgoraChatCallType.audio_1v1,
+    ChatCallKitCallType type = ChatCallKitCallType.audio_1v1,
     int? agoraUid,
     Map<String, String>? ext,
   }) async {
     if (userId.isEmpty) {
-      throw AgoraChatCallError.process(
-          AgoraChatCallErrorProcessCode.invalidParam, 'Require remote userId');
+      throw ChatCallKitError.process(
+          ChatCallKitErrorProcessCode.invalidParam, 'Require remote userId');
     }
     if (busy) {
-      throw AgoraChatCallError.process(
-          AgoraChatCallErrorProcessCode.busy, 'Current is busy');
+      throw ChatCallKitError.process(
+          ChatCallKitErrorProcessCode.busy, 'Current is busy');
     }
-    model.curCall = AgoraChatCall(
-      callId: AgoraChatCallKitTools.randomStr,
-      channel: AgoraChatCallKitTools.randomStr,
+    model.curCall = ChatCallKitCall(
+      callId: ChatCallKitTools.randomStr,
+      channel: ChatCallKitTools.randomStr,
       remoteUserAccount: userId,
       callType: type,
       isCaller: true,
       ext: ext,
     );
 
-    model.state = AgoraChatCallState.outgoing;
+    model.state = ChatCallKitCallState.outgoing;
 
     await sendInviteMsgToCallee(userId, type, model.curCall?.callId ?? "",
         model.curCall?.channel ?? "", ext);
@@ -544,10 +545,10 @@ class AgoraChatManager {
           callTimerDic.remove(userId);
           if (model.curCall != null) {
             sendCancelCallMsgToCallee(userId, model.curCall!.callId);
-            if (model.curCall!.callType != AgoraChatCallType.multi) {
+            if (model.curCall!.callType != ChatCallKitCallType.multi) {
               handler.onCallEndReason(model.curCall!.callId,
-                  AgoraChatCallEndReason.remoteNoResponse);
-              model.state = AgoraChatCallState.idle;
+                  ChatCallKitCallEndReason.remoteNoResponse);
+              model.state = ChatCallKitCallState.idle;
             }
           }
         },
@@ -557,7 +558,7 @@ class AgoraChatManager {
     return model.curCall!.callId;
   }
 
-  void removeUser(String userId, AgoraChatCallEndReason reason) {
+  void removeUser(String userId, ChatCallKitCallEndReason reason) {
     if (model.curCall != null) {
       handler.onUserRemoved(model.curCall!.callId, userId, reason);
     }
@@ -574,8 +575,8 @@ class AgoraChatManager {
     Map<String, String>? ext,
   ) async {
     if (userIds.isEmpty) {
-      throw AgoraChatCallError.process(
-          AgoraChatCallErrorProcessCode.invalidParam, 'Require remote userId');
+      throw ChatCallKitError.process(
+          ChatCallKitErrorProcessCode.invalidParam, 'Require remote userId');
     }
 
     if (model.curCall != null) {
@@ -596,20 +597,20 @@ class AgoraChatManager {
           callTimerDic.remove(element);
           if (model.curCall != null) {
             sendCancelCallMsgToCallee(element, model.curCall!.callId);
-            removeUser(element, AgoraChatCallEndReason.remoteNoResponse);
+            removeUser(element, ChatCallKitCallEndReason.remoteNoResponse);
           }
         });
       }
     } else {
-      model.curCall = AgoraChatCall(
-        callId: AgoraChatCallKitTools.randomStr,
-        callType: AgoraChatCallType.multi,
+      model.curCall = ChatCallKitCall(
+        callId: ChatCallKitTools.randomStr,
+        callType: ChatCallKitCallType.multi,
         isCaller: true,
-        channel: AgoraChatCallKitTools.randomStr,
+        channel: ChatCallKitTools.randomStr,
         ext: ext,
       );
 
-      model.state = AgoraChatCallState.answering;
+      model.state = ChatCallKitCallState.answering;
       for (var element in userIds) {
         sendInviteMsgToCallee(
           element,
@@ -624,7 +625,7 @@ class AgoraChatManager {
           callTimerDic.remove(element);
           if (model.curCall != null) {
             sendCancelCallMsgToCallee(element, model.curCall!.callId);
-            removeUser(element, AgoraChatCallEndReason.remoteNoResponse);
+            removeUser(element, ChatCallKitCallEndReason.remoteNoResponse);
           }
         });
       }
@@ -636,24 +637,24 @@ class AgoraChatManager {
   Future<void> hangup(String callId) async {
     if (model.curCall?.callId == callId) {
       clearAllTimer();
-      if (model.state == AgoraChatCallState.answering) {
-        handler.onCallEndReason(callId, AgoraChatCallEndReason.hangup);
-      } else if (model.state == AgoraChatCallState.outgoing) {
+      if (model.state == ChatCallKitCallState.answering) {
+        handler.onCallEndReason(callId, ChatCallKitCallEndReason.hangup);
+      } else if (model.state == ChatCallKitCallState.outgoing) {
         sendCancelCallMsgToCallee(
           model.curCall!.remoteUserAccount!,
           model.curCall!.callId,
         );
-        handler.onCallEndReason(callId, AgoraChatCallEndReason.cancel);
-      } else if (model.state == AgoraChatCallState.alerting) {
+        handler.onCallEndReason(callId, ChatCallKitCallEndReason.cancel);
+      } else if (model.state == ChatCallKitCallState.alerting) {
         sendAnswerMsg(
           model.curCall!.remoteUserAccount!,
           model.curCall!.callId,
           kRefuseResult,
           model.curCall!.remoteCallDevId!,
         );
-        handler.onCallEndReason(callId, AgoraChatCallEndReason.refuse);
+        handler.onCallEndReason(callId, ChatCallKitCallEndReason.refuse);
       }
-      model.state = AgoraChatCallState.idle;
+      model.state = ChatCallKitCallState.idle;
     }
   }
 

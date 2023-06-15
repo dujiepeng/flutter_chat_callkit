@@ -73,7 +73,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
     super.initState();
     addCallKitListener();
     currentList = widget.userList;
-    AgoraChatCallManager.initRTC().then((value) {
+    ChatCallKitCallManager.initRTC().then((value) {
       afterInit();
     });
   }
@@ -81,7 +81,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
   Future<void> afterInit() async {
     if (widget.isCaller && widget.userList != null) {
       isCalling = true;
-      callId = await AgoraChatCallManager.startInviteUsers(widget.userList!);
+      callId = await ChatCallKitCallManager.startInviteUsers(widget.userList!);
     }
 
     currentList?.forEach((element) {
@@ -96,15 +96,15 @@ class _MultiCallPageState extends State<MultiCallPage> {
         MultiCallItemView(
           userId: current!,
           isWaiting: false,
-          videoView: AgoraChatCallManager.getLocalVideoView(),
+          videoView: ChatCallKitCallManager.getLocalVideoView(),
         ));
     setState(() {});
   }
 
   void addCallKitListener() {
-    AgoraChatCallManager.addEventListener(
+    ChatCallKitCallManager.addEventListener(
       "multi",
-      AgoraChatCallKitEventHandler(
+      ChatCallKitCallKitEventHandler(
         onUserMuteAudio: (agoraUid, muted) {
           int index =
               list.indexWhere((element) => element.agoraUid == agoraUid);
@@ -133,7 +133,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
               agoraUid: agoraUid,
               userId: userId,
               isWaiting: false,
-              videoView: AgoraChatCallManager.getRemoteVideoView(agoraUid),
+              videoView: ChatCallKitCallManager.getRemoteVideoView(agoraUid),
             ));
           });
         },
@@ -154,13 +154,13 @@ class _MultiCallPageState extends State<MultiCallPage> {
   }
 
   void removeCallKitListener() {
-    AgoraChatCallManager.removeEventListener("multi");
+    ChatCallKitCallManager.removeEventListener("multi");
   }
 
   @override
   void dispose() {
     removeCallKitListener();
-    AgoraChatCallManager.releaseRTC();
+    ChatCallKitCallManager.releaseRTC();
     super.dispose();
   }
 
@@ -294,7 +294,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
     return CallButton(
       selected: false,
       callback: () async {
-        await AgoraChatCallManager.hangup(widget.callId ?? callId!);
+        await ChatCallKitCallManager.hangup(widget.callId ?? callId!);
       },
       selectImage: Image.asset("images/hang_up.png"),
       backgroundColor: const Color.fromRGBO(246, 50, 77, 1),
@@ -305,7 +305,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
     return CallButton(
       selected: false,
       callback: () async {
-        await AgoraChatCallManager.answer(widget.callId!);
+        await ChatCallKitCallManager.answer(widget.callId!);
         setState(() => isCalling = true);
       },
       selectImage: Image.asset("images/answer.png"),
@@ -319,9 +319,9 @@ class _MultiCallPageState extends State<MultiCallPage> {
       callback: () async {
         cameraOn = !cameraOn;
         if (cameraOn) {
-          await AgoraChatCallManager.cameraOn();
+          await ChatCallKitCallManager.cameraOn();
         } else {
-          await AgoraChatCallManager.cameraOff();
+          await ChatCallKitCallManager.cameraOff();
         }
         String? currentUserId = ChatClient.getInstance.currentUserId;
         int index = list.indexWhere((element) =>
@@ -346,9 +346,9 @@ class _MultiCallPageState extends State<MultiCallPage> {
       callback: () async {
         mute = !mute;
         if (mute) {
-          await AgoraChatCallManager.mute();
+          await ChatCallKitCallManager.mute();
         } else {
-          await AgoraChatCallManager.unMute();
+          await ChatCallKitCallManager.unMute();
         }
         setState(() {});
       },
@@ -359,7 +359,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
 
   Widget switchCameraButton() {
     return button('switch_camera', () {
-      AgoraChatCallManager.switchCamera();
+      ChatCallKitCallManager.switchCamera();
     });
   }
 
@@ -369,7 +369,7 @@ class _MultiCallPageState extends State<MultiCallPage> {
         return const ContactPage(isMulti: true);
       })).then((value) {
         if (value != null && value is List<String>) {
-          AgoraChatCallManager.startInviteUsers(value);
+          ChatCallKitCallManager.startInviteUsers(value);
           return value;
         }
       }).then((value) {

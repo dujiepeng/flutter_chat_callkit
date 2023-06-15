@@ -1,4 +1,4 @@
-enum AgoraChatCallState {
+enum ChatCallKitCallState {
   idle,
   outgoing,
   alerting,

@@ -40,7 +40,7 @@ PODS:
   - iris_event (0.0.1):
     - AgoraIrisEventFlutter_iOS (= 2.0.0)
     - Flutter
-  - permission_handler_apple (9.0.4):
+  - permission_handler_apple (9.1.0):
     - Flutter
 
 DEPENDENCIES:
@@ -82,7 +82,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   HyphenateChat: 9f6e4ac3b290e52cc0e52491f85d86097b35c285
   iris_event: fdcf9bbb53095fd9609ea19941df551d0398a789
-  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+  permission_handler_apple: 8f116445eff3c0e7c65ad60f5fef5490aa94b4e4
 
 PODFILE CHECKSUM: 7368163408c647b7eb699d0d788ba6718e18fb8d
 

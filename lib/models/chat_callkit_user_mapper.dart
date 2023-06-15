@@ -1,6 +1,6 @@
 /// User information Mapper, used to obtain the mapping between agoraUid and userId.
-class AgoraChatCallUserMapper {
-  const AgoraChatCallUserMapper(this.channel, this.infoMapper);
+class ChatCallKitCallUserMapper {
+  const ChatCallKitCallUserMapper(this.channel, this.infoMapper);
 
   /// rtc channel
   final String channel;

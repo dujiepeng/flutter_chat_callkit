@@ -1,24 +1,24 @@
-import 'package:agora_chat_callkit/agora_chat_callkit.dart';
-import 'package:agora_chat_callkit/inherited/agora_chat_manager.dart';
-import 'package:agora_chat_callkit/inherited/agora_rtc_manager.dart';
+import '../agora_chat_callkit.dart';
 
-import 'agora_chat_call_enum.dart';
+import 'chat_callkit_chat_manager.dart';
+import 'chat_callkit_enum.dart';
+import 'chat_callkit_rtc_manager.dart';
 
-class AgoraChatCallKitManagerImpl {
-  static AgoraChatCallKitManagerImpl? _instance;
-  static AgoraChatCallKitManagerImpl get instance {
-    _instance ??= AgoraChatCallKitManagerImpl();
+class ChatCallKitCallKitManagerImpl {
+  static ChatCallKitCallKitManagerImpl? _instance;
+  static ChatCallKitCallKitManagerImpl get instance {
+    _instance ??= ChatCallKitCallKitManagerImpl();
     return _instance!;
   }
 
-  Map<String, AgoraChatCallKitEventHandler> handlerMap = {};
+  Map<String, ChatCallKitCallKitEventHandler> handlerMap = {};
   RtcTokenHandler? rtcTokenHandler;
   UserMapperHandler? userMapperHandler;
 
   late final AgoraChatManager _chat;
   late final AgoraRTCManager _rtc;
 
-  AgoraChatCallKitManagerImpl() {
+  ChatCallKitCallKitManagerImpl() {
     _chat = AgoraChatManager(
         AgoraChatEventHandler(
           onCallAccept: () {
@@ -86,7 +86,7 @@ class AgoraChatCallKitManagerImpl {
 
   // 用于设置通话的默认状态
   Future<void> setDefaultModeType() async {
-    if (_chat.model.curCall!.callType == AgoraChatCallType.audio_1v1) {
+    if (_chat.model.curCall!.callType == ChatCallKitCallType.audio_1v1) {
       await _rtc.disableSpeaker();
     }
   }
@@ -101,7 +101,7 @@ class AgoraChatCallKitManagerImpl {
 
   Future<String> startSingleCall(
     String userId, {
-    AgoraChatCallType type = AgoraChatCallType.audio_1v1,
+    ChatCallKitCallType type = ChatCallKitCallType.audio_1v1,
     Map<String, String>? ext,
   }) {
     return _chat.startSingleCall(
@@ -128,7 +128,7 @@ class AgoraChatCallKitManagerImpl {
     return _chat.answerCall(callId);
   }
 
-  void addEventListener(String key, AgoraChatCallKitEventHandler handler) {
+  void addEventListener(String key, ChatCallKitCallKitEventHandler handler) {
     handlerMap[key] = handler;
   }
 
@@ -166,15 +166,15 @@ class AgoraChatCallKitManagerImpl {
   }
 }
 
-extension ChatEvent on AgoraChatCallKitManagerImpl {
-  Future<AgoraChatCallUserMapper?> updateUserMapper(int agoraUid) async {
+extension ChatEvent on ChatCallKitCallKitManagerImpl {
+  Future<ChatCallKitCallUserMapper?> updateUserMapper(int agoraUid) async {
     String? userId = ChatClient.getInstance.currentUserId;
 
     if (userId == null ||
         ChatClient.getInstance.options?.appKey == null ||
         _chat.model.curCall?.channel == null) return null;
 
-    AgoraChatCallUserMapper? mapper =
+    ChatCallKitCallUserMapper? mapper =
         await userMapperHandler?.call(_chat.model.curCall!.channel, agoraUid);
 
     if (_chat.model.curCall != null &&
@@ -189,30 +189,31 @@ extension ChatEvent on AgoraChatCallKitManagerImpl {
   }
 
   void stateChanged(
-      AgoraChatCallState newState, AgoraChatCallState preState) async {
+      ChatCallKitCallState newState, ChatCallKitCallState preState) async {
     switch (newState) {
-      case AgoraChatCallState.idle:
+      case ChatCallKitCallState.idle:
         {
           await _chat.clearCurrentCallInfo();
           await _rtc.clearCurrentCallInfo();
         }
         break;
-      case AgoraChatCallState.outgoing:
+      case ChatCallKitCallState.outgoing:
         {
           if (_chat.model.curCall == null) return;
-          if (_chat.model.curCall?.callType != AgoraChatCallType.audio_1v1) {
+          if (_chat.model.curCall?.callType != ChatCallKitCallType.audio_1v1) {
             await _rtc.enableVideo();
             await _rtc.startPreview();
           }
           await fetchToken();
         }
         break;
-      case AgoraChatCallState.alerting:
+      case ChatCallKitCallState.alerting:
         {
           if (_chat.model.curCall == null) return;
           await _rtc.initEngine();
           if (_chat.model.curCall != null) {
-            if (_chat.model.curCall!.callType != AgoraChatCallType.audio_1v1) {
+            if (_chat.model.curCall!.callType !=
+                ChatCallKitCallType.audio_1v1) {
               await _rtc.enableVideo();
               await _rtc.startPreview();
             }
@@ -227,10 +228,10 @@ extension ChatEvent on AgoraChatCallKitManagerImpl {
           }
         }
         break;
-      case AgoraChatCallState.answering:
+      case ChatCallKitCallState.answering:
         {
           if (_chat.model.curCall == null) return;
-          if (_chat.model.curCall!.callType == AgoraChatCallType.multi &&
+          if (_chat.model.curCall!.callType == ChatCallKitCallType.multi &&
               _chat.model.curCall!.isCaller) {
             // 多人主叫时，需要开启摄像头
             await _rtc.enableVideo();
@@ -246,7 +247,7 @@ extension ChatEvent on AgoraChatCallKitManagerImpl {
     await fetchToken();
   }
 
-  void onCallEndReason(String callId, AgoraChatCallEndReason reason) {
+  void onCallEndReason(String callId, ChatCallKitCallEndReason reason) {
     handlerMap.forEach((key, value) {
       value.onCallEnd?.call(callId, reason);
     });
@@ -258,21 +259,21 @@ extension ChatEvent on AgoraChatCallKitManagerImpl {
     });
   }
 
-  void onError(AgoraChatCallError error) {
+  void onError(ChatCallKitError error) {
     handlerMap.forEach((key, value) {
       value.onError?.call(error);
     });
   }
 
   void onUserRemoved(
-      String callId, String userId, AgoraChatCallEndReason reason) {
+      String callId, String userId, ChatCallKitCallEndReason reason) {
     handlerMap.forEach((key, value) {
       value.onUserRemoved?.call(callId, userId, reason);
     });
   }
 }
 
-extension RTCEvent on AgoraChatCallKitManagerImpl {
+extension RTCEvent on ChatCallKitCallKitManagerImpl {
   void onJoinChannelSuccess() async {
     if (_chat.model.curCall == null) return;
     await setDefaultModeType();
@@ -290,9 +291,9 @@ extension RTCEvent on AgoraChatCallKitManagerImpl {
   }
 
   void onUserJoined(int remoteUid) async {
-    AgoraChatCallUserMapper? mapper = await updateUserMapper(remoteUid);
+    ChatCallKitCallUserMapper? mapper = await updateUserMapper(remoteUid);
     if (_chat.model.curCall != null) {
-      if (_chat.model.curCall?.callType == AgoraChatCallType.multi) {
+      if (_chat.model.curCall?.callType == ChatCallKitCallType.multi) {
         mapper?.infoMapper.forEach((key, value) {
           _chat.callTimerDic.remove(value)?.cancel();
         });
@@ -314,11 +315,11 @@ extension RTCEvent on AgoraChatCallKitManagerImpl {
       handlerMap.forEach((key, value) {
         value.onUserLeaved?.call(remoteUid, userId);
       });
-      if (_chat.model.curCall!.callType != AgoraChatCallType.multi) {
+      if (_chat.model.curCall!.callType != ChatCallKitCallType.multi) {
         if (_chat.model.curCall != null) {
           handlerMap.forEach((key, value) {
             value.onCallEnd?.call(
-                _chat.model.curCall!.callId, AgoraChatCallEndReason.hangup);
+                _chat.model.curCall!.callId, ChatCallKitCallEndReason.hangup);
           });
         }
 
@@ -367,27 +368,27 @@ extension RTCEvent on AgoraChatCallKitManagerImpl {
         err == ErrorCodeType.errInvalidToken ||
         err == ErrorCodeType.errFailed) {
       handlerMap.forEach((key, value) {
-        value.onError?.call(AgoraChatCallError.rtc(err.index, "RTC Error"));
+        value.onError?.call(ChatCallKitError.rtc(err.index, "RTC Error"));
       });
     } else {
       if (err == ErrorCodeType.errFailed) {
         handlerMap.forEach((key, value) {
-          value.onError?.call(AgoraChatCallError.rtc(
-              AgoraChatCallErrorProcessCode.general,
+          value.onError?.call(ChatCallKitError.rtc(
+              ChatCallKitErrorProcessCode.general,
               "General error with no classified reason. Try calling the method again"));
         });
       }
 
       handlerMap.forEach((key, value) {
         value.onCallEnd
-            ?.call(_chat.model.curCall?.callId, AgoraChatCallEndReason.err);
+            ?.call(_chat.model.curCall?.callId, ChatCallKitCallEndReason.err);
       });
     }
     _chat.clearInfo();
   }
 }
 
-extension RTCAction on AgoraChatCallKitManagerImpl {
+extension RTCAction on ChatCallKitCallKitManagerImpl {
   Future<void> startPreview() => _rtc.startPreview();
   Future<void> stopPreview() => _rtc.stopPreview();
   Future<void> switchCamera() => _rtc.switchCamera();

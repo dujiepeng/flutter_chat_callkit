@@ -1,7 +1,7 @@
-import 'package:agora_chat_callkit/agora_chat_callkit_define.dart';
+import '../chat_callkit_define.dart';
 
-class AgoraChatCall {
-  AgoraChatCall({
+class ChatCallKitCall {
+  ChatCallKitCall({
     required this.callId,
     required this.callType,
     required this.isCaller,
@@ -15,7 +15,7 @@ class AgoraChatCall {
 
   final String callId;
   final String? remoteUserAccount;
-  final AgoraChatCallType callType;
+  final ChatCallKitCallType callType;
   final String channel;
   final bool isCaller;
   final String? remoteCallDevId;
@@ -23,17 +23,17 @@ class AgoraChatCall {
   Map<int, String> allUserAccounts;
   final Map<String, String>? ext;
 
-  AgoraChatCall copyWith({
+  ChatCallKitCall copyWith({
     String? callId,
     String? remoteUserAccount,
     String? remoteCallDevId,
-    AgoraChatCallType? callType,
+    ChatCallKitCallType? callType,
     bool? isCaller,
     int? agoraUid,
     String? channel,
     Map<String, String>? ext,
   }) {
-    return AgoraChatCall(
+    return ChatCallKitCall(
       callId: callId ?? this.callId,
       remoteUserAccount: remoteUserAccount ?? this.remoteUserAccount,
       remoteCallDevId: remoteCallDevId ?? this.remoteCallDevId,

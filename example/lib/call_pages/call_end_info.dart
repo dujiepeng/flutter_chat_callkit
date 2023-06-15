@@ -10,7 +10,7 @@ class CallEndInfo {
   final String? callId;
   final int callTime;
   final String remoteUserId;
-  final AgoraChatCallEndReason reason;
+  final ChatCallKitCallEndReason reason;
 
   @override
   String toString() {

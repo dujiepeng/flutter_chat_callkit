@@ -1,12 +1,13 @@
-import 'package:agora_chat_callkit/agora_chat_callkit.dart';
+import 'chat_callkit_define.dart';
+import 'chat_callkit_error.dart';
 
-/// AgoraChatCallKit event handler.
-class AgoraChatCallKitEventHandler {
-  /// AgoraChatCallKit event handler.
+/// ChatCallKitCallKit event handler.
+class ChatCallKitCallKitEventHandler {
+  /// ChatCallKitCallKit event handler.
   ///
-  /// Param [onError] Call back when the call fails, See [AgoraChatCallError].
+  /// Param [onError] Call back when the call fails, See [ChatCallKitError].
   ///
-  /// Param [onCallEnd] Call back when the call ends, See [AgoraChatCallEndReason].
+  /// Param [onCallEnd] Call back when the call ends, See [ChatCallKitCallEndReason].
   ///
   /// Param [onReceiveCall] Call back when you receive a call invitation.
   ///
@@ -24,7 +25,7 @@ class AgoraChatCallKitEventHandler {
   ///
   /// Param [onAnswer] Call back when the call is answered.
   ///
-  AgoraChatCallKitEventHandler({
+  ChatCallKitCallKitEventHandler({
     this.onError,
     this.onCallEnd,
     this.onReceiveCall,
@@ -37,11 +38,12 @@ class AgoraChatCallKitEventHandler {
     this.onAnswer,
   });
 
-  /// Call back when the call fails, See [AgoraChatCallError].
-  final void Function(AgoraChatCallError error)? onError;
+  /// Call back when the call fails, See [ChatCallKitError].
+  final void Function(ChatCallKitError error)? onError;
 
-  /// Call back when the call ends, See [AgoraChatCallEndReason].
-  final void Function(String? callId, AgoraChatCallEndReason reason)? onCallEnd;
+  /// Call back when the call ends, See [ChatCallKitCallEndReason].
+  final void Function(String? callId, ChatCallKitCallEndReason reason)?
+      onCallEnd;
 
   /// Call back when an active user leaves.
   final void Function(int agoraUid, String? userId)? onUserLeaved;
@@ -59,7 +61,7 @@ class AgoraChatCallKitEventHandler {
   final void Function(
     String userId,
     String callId,
-    AgoraChatCallType callType,
+    ChatCallKitCallType callType,
     Map<String, String>? ext,
   )? onReceiveCall;
 
@@ -73,6 +75,6 @@ class AgoraChatCallKitEventHandler {
   final void Function(
     String callId,
     String userId,
-    AgoraChatCallEndReason reason,
+    ChatCallKitCallEndReason reason,
   )? onUserRemoved;
 }

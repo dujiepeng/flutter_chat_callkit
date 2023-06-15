@@ -27,7 +27,7 @@ class SingleCallPage extends StatefulWidget {
   factory SingleCallPage.receive(
     String userId,
     String callId, {
-    AgoraChatCallType type = AgoraChatCallType.audio_1v1,
+    ChatCallKitCallType type = ChatCallKitCallType.audio_1v1,
     Widget? avatar,
     Widget? remoteAvatar,
     String? nickname,
@@ -35,7 +35,7 @@ class SingleCallPage extends StatefulWidget {
     Widget? backgroundWidget,
     TextStyle? nicknameTextStyle,
   }) {
-    assert(type != AgoraChatCallType.multi,
+    assert(type != ChatCallKitCallType.multi,
         "SingleCallPage must video_1v1 or audio_1v1 type.");
 
     return SingleCallPage(
@@ -53,7 +53,7 @@ class SingleCallPage extends StatefulWidget {
 
   factory SingleCallPage.call(
     String userId, {
-    AgoraChatCallType type = AgoraChatCallType.audio_1v1,
+    ChatCallKitCallType type = ChatCallKitCallType.audio_1v1,
     Widget? avatar,
     Widget? remoteAvatar,
     String? nickname,
@@ -61,7 +61,7 @@ class SingleCallPage extends StatefulWidget {
     Widget? backgroundWidget,
     TextStyle? nicknameTextStyle,
   }) {
-    assert(type != AgoraChatCallType.multi,
+    assert(type != ChatCallKitCallType.multi,
         "SingleCallPage must video_1v1 or audio_1v1 type.");
 
     return SingleCallPage(
@@ -86,7 +86,7 @@ class SingleCallPage extends StatefulWidget {
     this.backgroundWidget,
     this.nicknameTextStyle,
     this.timeTextStyle,
-    this.type = AgoraChatCallType.audio_1v1,
+    this.type = ChatCallKitCallType.audio_1v1,
     this.calling = false,
     super.key,
   });
@@ -98,7 +98,7 @@ class SingleCallPage extends StatefulWidget {
   final Widget? backgroundWidget;
   final TextStyle? nicknameTextStyle;
   final TextStyle? timeTextStyle;
-  final AgoraChatCallType type;
+  final ChatCallKitCallType type;
   final String? callId;
   final bool calling;
 
@@ -132,26 +132,26 @@ class _SingleCallPageState extends State<SingleCallPage> {
 
     if (widget.callId != null) {
       if (widget.calling) {
-        if (widget.type == AgoraChatCallType.audio_1v1) {
+        if (widget.type == ChatCallKitCallType.audio_1v1) {
           currentType = SingleCallType.audioCallCalling;
         } else {
           currentType = SingleCallType.videoCallCalling;
         }
       } else {
-        if (widget.type == AgoraChatCallType.audio_1v1) {
+        if (widget.type == ChatCallKitCallType.audio_1v1) {
           currentType = SingleCallType.audioCallInHolding;
         } else {
           currentType = SingleCallType.videoCallInHolding;
         }
       }
     } else {
-      if (widget.type == AgoraChatCallType.audio_1v1) {
+      if (widget.type == ChatCallKitCallType.audio_1v1) {
         currentType = SingleCallType.audioCallOutHolding;
       } else {
         currentType = SingleCallType.videoCallOutHolding;
       }
     }
-    AgoraChatCallManager.initRTC().then((value) {
+    ChatCallKitCallManager.initRTC().then((value) {
       setState(() {
         hasInit = true;
       });
@@ -176,31 +176,31 @@ class _SingleCallPageState extends State<SingleCallPage> {
   }
 
   void answer() async {
-    await AgoraChatCallManager.answer(widget.callId!);
+    await ChatCallKitCallManager.answer(widget.callId!);
     holding = false;
     setState(() {});
   }
 
   void call() async {
     try {
-      callId = await AgoraChatCallManager.startSingleCall(
+      callId = await ChatCallKitCallManager.startSingleCall(
         widget.userId,
         type: widget.type,
       );
-    } on AgoraChatCallError {
+    } on ChatCallKitError {
       Navigator.of(context).pop();
     }
   }
 
   void addListener() {
-    AgoraChatCallManager.addEventListener(
+    ChatCallKitCallManager.addEventListener(
       "key",
-      AgoraChatCallKitEventHandler(
+      ChatCallKitCallKitEventHandler(
         onError: (error) => Navigator.of(context).pop(
           CallEndInfo(
             callId: callId,
             callTime: 0,
-            reason: AgoraChatCallEndReason.err,
+            reason: ChatCallKitCallEndReason.err,
             remoteUserId: widget.userId,
           ),
         ),
@@ -220,7 +220,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
   }
 
   void removeListener() {
-    AgoraChatCallManager.removeEventListener("key");
+    ChatCallKitCallManager.removeEventListener("key");
   }
 
   void onUserMuteAudio(int agoraUid, bool muted) {
@@ -230,11 +230,11 @@ class _SingleCallPageState extends State<SingleCallPage> {
   }
 
   void onUserMuteVideo(int agoraUid, bool muted) {
-    if (widget.type == AgoraChatCallType.audio_1v1) return;
+    if (widget.type == ChatCallKitCallType.audio_1v1) return;
     if (muted) {
       remoteVideoWidget = Container(color: Colors.black);
     } else {
-      remoteVideoWidget = AgoraChatCallManager.getRemoteVideoView(agoraUid);
+      remoteVideoWidget = ChatCallKitCallManager.getRemoteVideoView(agoraUid);
     }
 
     setState(() {});
@@ -267,7 +267,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
   void dispose() {
     stopTimer();
     removeListener();
-    AgoraChatCallManager.releaseRTC();
+    ChatCallKitCallManager.releaseRTC();
     super.dispose();
   }
 
@@ -366,7 +366,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
 
   Widget localWidget() {
     return cameraOn
-        ? AgoraChatCallManager.getLocalVideoView() ??
+        ? ChatCallKitCallManager.getLocalVideoView() ??
             Container(color: Colors.black)
         : Container(color: Colors.black);
   }
@@ -545,9 +545,9 @@ class _SingleCallPageState extends State<SingleCallPage> {
       callback: () async {
         cameraOn = !cameraOn;
         if (cameraOn) {
-          await AgoraChatCallManager.cameraOn();
+          await ChatCallKitCallManager.cameraOn();
         } else {
-          await AgoraChatCallManager.cameraOff();
+          await ChatCallKitCallManager.cameraOff();
         }
         setState(() {});
       },
@@ -561,7 +561,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
   Widget switchCameraButton() {
     return InkWell(
       onTap: () {
-        AgoraChatCallManager.switchCamera();
+        ChatCallKitCallManager.switchCamera();
       },
       child: Container(
         width: 40,
@@ -579,7 +579,7 @@ class _SingleCallPageState extends State<SingleCallPage> {
     return CallButton(
       selected: false,
       callback: () async {
-        await AgoraChatCallManager.hangup(widget.callId ?? callId!);
+        await ChatCallKitCallManager.hangup(widget.callId ?? callId!);
       },
       selectImage: Image.asset("images/hang_up.png"),
       backgroundColor: const Color.fromRGBO(246, 50, 77, 1),
@@ -590,10 +590,10 @@ class _SingleCallPageState extends State<SingleCallPage> {
     return CallButton(
       selected: false,
       callback: () async {
-        await AgoraChatCallManager.answer(widget.callId!);
+        await ChatCallKitCallManager.answer(widget.callId!);
         holding = false;
         setState(() {
-          if (widget.type == AgoraChatCallType.audio_1v1) {
+          if (widget.type == ChatCallKitCallType.audio_1v1) {
             currentType = SingleCallType.audioCallCalling;
           } else {
             currentType = SingleCallType.videoCallCalling;
@@ -611,9 +611,9 @@ class _SingleCallPageState extends State<SingleCallPage> {
       callback: () async {
         mute = !mute;
         if (mute) {
-          await AgoraChatCallManager.mute();
+          await ChatCallKitCallManager.mute();
         } else {
-          await AgoraChatCallManager.unMute();
+          await ChatCallKitCallManager.unMute();
         }
         setState(() {});
       },
@@ -628,9 +628,9 @@ class _SingleCallPageState extends State<SingleCallPage> {
       callback: () async {
         speakerOn = !speakerOn;
         if (speakerOn) {
-          await AgoraChatCallManager.speakerOn();
+          await ChatCallKitCallManager.speakerOn();
         } else {
-          await AgoraChatCallManager.speakerOff();
+          await ChatCallKitCallManager.speakerOff();
         }
         setState(() {});
       },

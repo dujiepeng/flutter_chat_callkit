@@ -1,21 +1,22 @@
-import 'package:agora_chat_callkit/agora_chat_callkit.dart';
-import 'inherited/agora_chat_call_kit_manager_impl.dart';
+import 'agora_chat_callkit.dart';
 
-class AgoraChatCallManager {
-  static AgoraChatCallKitManagerImpl get _impl =>
-      AgoraChatCallKitManagerImpl.instance;
+import 'inherited/chat_callkit_manager_impl.dart';
+
+class ChatCallKitCallManager {
+  static ChatCallKitCallKitManagerImpl get _impl =>
+      ChatCallKitCallKitManagerImpl.instance;
 
   /// Initiate a 1v1 call.
   ///
   /// Param [userId] called user id.
   ///
-  /// Param [type] call type, see [AgoraChatCallType].
+  /// Param [type] call type, see [ChatCallKitCallType].
   ///
   /// Param [ext] additional information.
   ///
   static Future<String> startSingleCall(
     String userId, {
-    AgoraChatCallType type = AgoraChatCallType.audio_1v1,
+    ChatCallKitCallType type = ChatCallKitCallType.audio_1v1,
     Map<String, String>? ext,
   }) {
     return _impl.startSingleCall(userId, type: type, ext: ext);
@@ -61,14 +62,14 @@ class AgoraChatCallManager {
   }
 
   /// Turn on the camera, when you call it, the other party will receive
-  /// a [AgoraChatCallKitEventHandler.onUserMuteVideo] callback.
+  /// a [ChatCallKitCallKitEventHandler.onUserMuteVideo] callback.
   static Future<void> cameraOn() async {
     await _impl.enableLocalView();
     await _impl.startPreview();
   }
 
   /// Turn off the camera, when you call it, the other party will receive
-  /// a [AgoraChatCallKitEventHandler.onUserMuteVideo] callback.
+  /// a [ChatCallKitCallKitEventHandler.onUserMuteVideo] callback.
   static Future<void> cameraOff() async {
     await _impl.disableLocalView();
     await _impl.stopPreview();
@@ -92,13 +93,13 @@ class AgoraChatCallManager {
   }
 
   /// Mute, mute the other party can not hear you, when you mute,
-  /// the other party will receive [AgoraChatCallKitEventHandler.onUserMuteAudio] callback.
+  /// the other party will receive [ChatCallKitCallKitEventHandler.onUserMuteAudio] callback.
   static Future<void> mute() {
     return _impl.mute();
   }
 
   /// Unmute. When unmute, the other party can hear your voice. When you call unmute,
-  /// the other party will receive a [AgoraChatCallKitEventHandler.onUserMuteAudio] callback.
+  /// the other party will receive a [ChatCallKitCallKitEventHandler.onUserMuteAudio] callback.
   static Future<void> unMute() {
     return _impl.unMute();
   }
@@ -131,10 +132,10 @@ class AgoraChatCallManager {
   ///
   /// Param [identifier] The custom handler identifier, is used to find the corresponding handler.
   ///
-  /// Param [handler] The handle for callkit event. See [AgoraChatCallKitEventHandler].
+  /// Param [handler] The handle for callkit event. See [ChatCallKitCallKitEventHandler].
   static void addEventListener(
     String identifier,
-    AgoraChatCallKitEventHandler handler,
+    ChatCallKitCallKitEventHandler handler,
   ) {
     _impl.addEventListener(identifier, handler);
   }

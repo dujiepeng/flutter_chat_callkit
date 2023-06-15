@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: (context, child) {
-        return AgoraChatCallKit(
+        return ChatCallKitCallKit(
           agoraAppId: Config.agoraAppId,
           timeoutDuration: const Duration(seconds: 30),
           child: child!,
@@ -60,19 +60,19 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     // set agoraToken request handler.
-    AgoraChatCallManager.setRTCTokenHandler((channel, agoraAppId) {
+    ChatCallKitCallManager.setRTCTokenHandler((channel, agoraAppId) {
       return requestAppServerToken(channel, Random().nextInt(999999));
     });
 
     // set agoraUid and userId mapper handler.
-    AgoraChatCallManager.setUserMapperHandler((channel, agoraUid) {
+    ChatCallKitCallManager.setUserMapperHandler((channel, agoraUid) {
       return requestAppServerUserMapper(channel, agoraUid);
     });
 
     // add event listener.
-    AgoraChatCallManager.addEventListener(
+    ChatCallKitCallManager.addEventListener(
       "UNIQUE_HANDLER_ID",
-      AgoraChatCallKitEventHandler(
+      ChatCallKitCallKitEventHandler(
         onReceiveCall: onReceiveCall,
       ),
     );
@@ -248,11 +248,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void audioCall() async {
-    pushToCallPage([_chatId], AgoraChatCallType.audio_1v1);
+    pushToCallPage([_chatId], ChatCallKitCallType.audio_1v1);
   }
 
   void videoCall() async {
-    pushToCallPage([_chatId], AgoraChatCallType.video_1v1);
+    pushToCallPage([_chatId], ChatCallKitCallType.video_1v1);
   }
 
   void multiCall() async {
@@ -260,7 +260,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return const ContactPage(isMulti: true);
     })).then((value) {
       if (value != null && value is List && value.isNotEmpty) {
-        pushToCallPage(value as List<String>, AgoraChatCallType.multi);
+        pushToCallPage(value as List<String>, ChatCallKitCallType.multi);
       }
     });
   }
@@ -268,16 +268,16 @@ class _MyHomePageState extends State<MyHomePage> {
   void onReceiveCall(
     String userId,
     String callId,
-    AgoraChatCallType callType,
+    ChatCallKitCallType callType,
     Map<String, String>? ext,
   ) async {
     pushToCallPage([userId], callType, callId);
   }
 
-  void pushToCallPage(List<String> userIds, AgoraChatCallType callType,
+  void pushToCallPage(List<String> userIds, ChatCallKitCallType callType,
       [String? callId]) async {
     Widget page;
-    if (callType == AgoraChatCallType.multi) {
+    if (callType == ChatCallKitCallType.multi) {
       if (callId == null) {
         page = MultiCallPage.call(userIds);
       } else {
@@ -306,7 +306,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    AgoraChatCallManager.removeEventListener("UNIQUE_HANDLER_ID");
+    ChatCallKitCallManager.removeEventListener("UNIQUE_HANDLER_ID");
     super.dispose();
   }
 

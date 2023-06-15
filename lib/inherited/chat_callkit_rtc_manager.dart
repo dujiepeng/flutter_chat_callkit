@@ -1,7 +1,7 @@
-import 'package:agora_chat_callkit/agora_chat_callkit.dart';
 import 'package:flutter/material.dart';
 
-import 'agora_chat_log_tool.dart';
+import '../agora_chat_callkit.dart';
+import 'chat_callkit_log_tool.dart';
 
 class RTCOptions {
   final AudioScenarioType? audioScenarioType;
@@ -169,7 +169,7 @@ class AgoraRTCManager {
   }
 
   Future<void> joinChannel(
-    AgoraChatCallType type,
+    ChatCallKitCallType type,
     String token,
     String channel,
     int uid,
