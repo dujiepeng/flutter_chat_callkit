@@ -60,7 +60,7 @@ Future<Map<String, int>> requestAppServerToken(
 /// Because AgoraChat and agora are two account systems, you need to map the Agora Uid that is added to the
 /// call to the user id of AgoraChat. Through this service, you can query the corresponding AgoraChat userId
 /// through channel and agora uid. This service needs to be provided by yourself.
-Future<ChatCallKitCallUserMapper?> requestAppServerUserMapper(
+Future<ChatCallKitUserMapper?> requestAppServerUserMapper(
   String channel,
   int agoraUid,
 ) async {
@@ -92,7 +92,7 @@ Future<ChatCallKitCallUserMapper?> requestAppServerUserMapper(
       'Authorization': 'Bearer $accessToken'
     },
   );
-  ChatCallKitCallUserMapper? ret;
+  ChatCallKitUserMapper? ret;
   Map<String, dynamic>? map = convert.jsonDecode(response.body);
   if (map != null) {
     if (map["code"] == "RES_OK") {
@@ -102,7 +102,7 @@ Future<ChatCallKitCallUserMapper?> requestAppServerUserMapper(
       result.forEach((key, value) {
         mapper[int.parse(key)] = value;
       });
-      ret = ChatCallKitCallUserMapper(channel, mapper);
+      ret = ChatCallKitUserMapper(channel, mapper);
     }
   }
 

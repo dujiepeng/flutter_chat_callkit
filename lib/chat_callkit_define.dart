@@ -4,8 +4,8 @@ import 'package:agora_chat_callkit/models/chat_callkit_user_mapper.dart';
 typedef RtcTokenHandler = Future<Map<String, int>> Function(
     String channel, String agoraAppId);
 
-/// Returns a ChatCallKitCallUserMapper, See [ChatCallKitCallUserMapper]
-typedef UserMapperHandler = Future<ChatCallKitCallUserMapper?> Function(
+/// Returns a ChatCallKitUserMapper, See [ChatCallKitUserMapper]
+typedef UserMapperHandler = Future<ChatCallKitUserMapper?> Function(
     String channel, int agoraUid);
 
 /// Call type

@@ -4,7 +4,7 @@
 
 ## Understand the tech
 
-For a call, the call invitation is implemented via Agora Chat, while the call is made through Agora RTC. As the accounts of Agora RTC and Agora Chat are not globally recognizable at present, the accounts need to be mapped via the `ChatCallKitManager.setUserMapperHandler` callback in `agora_chat_callkit`. When a user joins the call, the Agora RTC user ID (UID) will be returned via the callback. After you get the corresponding Agora Chat user ID, you need to return it to `agora_chat_callkit`. If there is no mapping between the two user IDs, the call will not proceed properly. See `ChatCallKitCallUserMapper`.
+For a call, the call invitation is implemented via Agora Chat, while the call is made through Agora RTC. As the accounts of Agora RTC and Agora Chat are not globally recognizable at present, the accounts need to be mapped via the `ChatCallKitManager.setUserMapperHandler` callback in `agora_chat_callkit`. When a user joins the call, the Agora RTC user ID (UID) will be returned via the callback. After you get the corresponding Agora Chat user ID, you need to return it to `agora_chat_callkit`. If there is no mapping between the two user IDs, the call will not proceed properly. See `ChatCallKitUserMapper`.
 
 This section describes how to implement a one-to-one call or group call. 
 
@@ -159,7 +159,7 @@ ChatCallKitManager.setUserMapperHandler((channel, agoraUid) {
   // channel: The channel to which the Agora RTC user ID belongs.
   // agoraUid: The Agora RTC user ID that corresponds to the Agora Chat user ID.
   // userId: The Agora Chat user ID that corresponds to the Agora RTC user ID.
-  return Future(() => ChatCallKitCallUserMapper(channel, {agoraUid, userId}));
+  return Future(() => ChatCallKitUserMapper(channel, {agoraUid, userId}));
 });
 ```
 

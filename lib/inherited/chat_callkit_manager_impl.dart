@@ -167,14 +167,14 @@ class ChatCallKitManagerImpl {
 }
 
 extension ChatEvent on ChatCallKitManagerImpl {
-  Future<ChatCallKitCallUserMapper?> updateUserMapper(int agoraUid) async {
+  Future<ChatCallKitUserMapper?> updateUserMapper(int agoraUid) async {
     String? userId = ChatClient.getInstance.currentUserId;
 
     if (userId == null ||
         ChatClient.getInstance.options?.appKey == null ||
         _chat.model.curCall?.channel == null) return null;
 
-    ChatCallKitCallUserMapper? mapper =
+    ChatCallKitUserMapper? mapper =
         await userMapperHandler?.call(_chat.model.curCall!.channel, agoraUid);
 
     if (_chat.model.curCall != null &&
@@ -291,7 +291,7 @@ extension RTCEvent on ChatCallKitManagerImpl {
   }
 
   void onUserJoined(int remoteUid) async {
-    ChatCallKitCallUserMapper? mapper = await updateUserMapper(remoteUid);
+    ChatCallKitUserMapper? mapper = await updateUserMapper(remoteUid);
     if (_chat.model.curCall != null) {
       if (_chat.model.curCall?.callType == ChatCallKitCallType.multi) {
         mapper?.infoMapper.forEach((key, value) {
